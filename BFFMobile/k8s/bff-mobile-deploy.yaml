@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bffmobile-deploy
+  namespace: bookstore-ns
+spec:
+  selector:
+    matchLabels:
+      app: bffmobile-ms
+  replicas: 2  # 2 pods
+  template:
+    metadata:
+      labels:
+        app: bffmobile-ms
+    spec:
+      containers:
+      - name: bffmobile-ms
+        image: bigfatmaddy007/mobilebff01:latest  # Replace with the actual image
+        ports:
+        - containerPort: 80  # port your service listens on
+        livenessProbe:  # Liveness probe configuration
+          httpGet:
+            path: /status  # Path to the health check endpoint
+            port: 80  # The port on which the container is listening
+          initialDelaySeconds: 10  # Delay before the probe starts
+          periodSeconds: 5  # Frequency of the probe
+        env:
+        - name: BOOKS_SERVICE  # Set the environment variables as needed
+          value: 'http://a5462e64615f54a19857b93c81b01c73-1703461597.us-east-1.elb.amazonaws.com'  # Add the actual service URL or use variable substitution
+        - name: CUSTOMER_SERVICE
+          value: 'http://aa2ecb9eee2df4e718b3f2646af3d2f9-1429358118.us-east-1.elb.amazonaws.com'
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - bffmobile-ms

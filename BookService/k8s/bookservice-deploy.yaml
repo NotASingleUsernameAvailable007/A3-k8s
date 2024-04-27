@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookservice-deploy
+  namespace: bookstore-ns
+spec:
+  selector:
+    matchLabels:
+      app: bookservice-ms
+  replicas: 1  # Adjust the number of replicas as needed
+  template:
+    metadata:
+      labels:
+        app: bookservice-ms
+    spec:
+      containers:
+      - name: bookservice-ms
+        image: bigfatmaddy007/bookservice01:latest  # Replace with the actual image
+        ports:
+        - containerPort: 3000  # port your service listens on
+        livenessProbe:
+          httpGet:
+            path: /status  # Path to the health check endpoint
+            port: 3000     # Port your app listens on, must match the container port
+          initialDelaySeconds: 10  # Delay before liveness probe is initiated
+          periodSeconds: 5  
+        env:
+        - name: URL_BASE_RECOMMENDATION  # Set the environment variables as needed
+          value: http://52.72.198.36/recommended-titles/isbn/  # Replace with the actual service URL or use variable substitution
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - bookservice-ms

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customerservice-deploy
+  namespace: bookstore-ns
+spec:
+  selector:
+    matchLabels:
+      app: customerservice-ms
+  replicas: 2  # 2 pods
+  template:
+    metadata:
+      labels:
+        app: customerservice-ms
+    spec:
+      containers:
+      - name: customerservice-ms
+        image: bigfatmaddy007/customerservice01:latest  # Replace with the actual image
+        ports:
+        - containerPort: 3000  # port your service listens on
+        livenessProbe:
+          httpGet:
+            path: /status  # Path to the health check endpoint
+            port: 3000     # Port your app listens on, must match the container port
+          initialDelaySeconds: 10  # Delay before liveness probe is initiated
+          periodSeconds: 5  
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - customerservice-ms

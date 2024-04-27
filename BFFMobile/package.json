@@ -1,0 +1,31 @@
+{
+    "name": "bookstore",
+    "version": "1.0.0",
+    "description": "A simple bookstore Web BFF using Node.js, Express, and MySQL",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://yourrepositoryurl.git"
+    },
+    "author": "Your Name",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.6.8",
+        "body-parser": "^1.19.0",
+        "dotenv": "^16.4.5",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^9.0.2",
+        "mysql2": "^2.3.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    },
+    "bugs": {
+        "url": "https://yourrepositoryurl/issues"
+    },
+    "homepage": "https://yourrepositoryurl#readme"
+}
